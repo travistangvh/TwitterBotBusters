@@ -61,6 +61,7 @@ assert mode in ['GCN', 'GAT', 'RGCN']
 # assert dataset_name in ['cresci-2015']
 
 data = get_train_data(dataset_name)
+data = data.contiguous()
 
 # hidden_dim = args.hidden_dim
 # dropout = args.dropout
@@ -297,5 +298,4 @@ if __name__ == '__main__':
                                             'test_auc',
                                             'test_mcc',
                                             'test_pr_auc'])
-
     train(results)
