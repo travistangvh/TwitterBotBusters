@@ -227,8 +227,13 @@ tweet_text = [text for text in tweet.text]
 # feature_extract=pipeline('feature-extraction',model='roberta-base',tokenizer='roberta-base',device=3,padding=True, truncation=True,max_length=50, add_special_tokens = True)
 
 from transformers import RobertaTokenizer, RobertaModel
-tokenizer = RobertaTokenizer.from_pretrained('roberta-base', local_files_only=True)
-model = RobertaModel.from_pretrained('roberta-base', local_files_only=True)
+tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+model = RobertaModel.from_pretrained('roberta-base')
+# from transformers import AutoTokenizer, AutoModelForMaskedLM
+
+# tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+# model = AutoModelForMaskedLM.from_pretrained("roberta-base")
+
 feature_extract=pipeline('feature-extraction',model=model,tokenizer=tokenizer,device=0)
 
 def Des_embbeding():
