@@ -39,6 +39,40 @@ class BotGAT(nn.Module):
         self.gat2 = GATConv(hidden_dim, hidden_dim)
         self.dropout = nn.Dropout(p=dropout)
 
+        ### GCN ###
+        self.linear_relu_des_gcn = nn.Sequential(
+            nn.Linear(des_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_tweet_gcn = nn.Sequential(
+            nn.Linear(tweet_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_num_prop_gcn = nn.Sequential(
+            nn.Linear(num_prop_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_cat_prop_gcn = nn.Sequential(
+            nn.Linear(cat_prop_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+
+        self.linear_relu_input_gcn = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_output1_gcn = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU()
+        )
+        self.linear_output2_gcn = nn.Linear(hidden_dim, 2)
+
+        self.gcn1_gcn = GCNConv(hidden_dim, hidden_dim)
+        self.gcn2_gcn = GCNConv(hidden_dim, hidden_dim)
+        self.dropout_gcn = nn.Dropout(p=dropout)
+
+        self.linear_ensemble = nn.Linear(hidden_dim, 2)
+
     def forward(self, des, tweet, num_prop, cat_prop, edge_index, edge_type=None):
         d = self.linear_relu_des(des)
         t = self.linear_relu_tweet(tweet)
@@ -51,7 +85,24 @@ class BotGAT(nn.Module):
         x = self.dropout(x)
         x = self.gat2(x, edge_index)
         x = self.linear_relu_output1(x)
-        x = self.linear_output2(x)
+        # x = self.linear_output2(x)
+
+        ### GCN ###
+        d_gcn = self.linear_relu_des_gcn(des)
+        t_gcn = self.linear_relu_tweet_gcn(tweet)
+        n_gcn = self.linear_relu_num_prop_gcn(num_prop)
+        c_gcn = self.linear_relu_cat_prop_gcn(cat_prop)
+        x_gcn = torch.cat((d_gcn, t_gcn, n_gcn, c_gcn), dim=1)
+        x_gcn = self.dropout_gcn(x_gcn)
+        x_gcn = self.linear_relu_input_gcn(x_gcn)
+        x_gcn = self.gcn1_gcn(x_gcn, edge_index)
+        x_gcn = self.dropout_gcn(x_gcn)
+        x_gcn = self.gcn2_gcn(x_gcn, edge_index)
+        x_gcn = self.linear_relu_output1_gcn(x_gcn)
+        # x_gcn = self.linear_output2_gcn(x_gcn)
+
+        stack = torch.cat((x, x_gcn), dim=0)
+        x = self.linear_ensemble(stack)
         return x
 
 
