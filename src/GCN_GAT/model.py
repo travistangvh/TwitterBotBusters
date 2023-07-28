@@ -4,25 +4,19 @@ from torch_geometric.nn.conv.gat_conv import GATConv
 from torch_geometric.nn.conv.gcn_conv import GCNConv
 from torch_geometric.nn.conv.rgcn_conv import RGCNConv
 
-class MLP(nn.Module):
-    def __init__(self, input_dim):
-        super(MLP, self).__init__()
-        self.layers = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(input_dim, input_dim * 4),
-            nn.ReLU(),
-            nn.Linear(input_dim * 4, input_dim * 2),
-            nn.ReLU(),
-            nn.Linear(input_dim * 2, input_dim)
-        )
-    def forward(self, x):
-        x = self.layers(x)
-        return x
-
 class BotGAT_MLP_Skip(nn.Module):
     def __init__(self, hidden_dim, des_size=768, tweet_size=768, num_prop_size=5, cat_prop_size=3, dropout=0.3):
+        super(BotGAT_MLP_Skip, self).__init__()
+
         ### MLP ###
-        self.mlp_before = MLP(hidden_dim)
+        self.mlp_before = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(hidden_dim, hidden_dim * 4),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 4, hidden_dim * 2),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        )
         ### GAT ###
 
         self.linear_relu_des = nn.Sequential(
@@ -54,11 +48,18 @@ class BotGAT_MLP_Skip(nn.Module):
 
         self.gat1 = GATConv(hidden_dim, hidden_dim // 4, heads=4)
         
-        self.gat2 = GATConv(hidden_dim*2, hidden_dim)
+        self.gat2 = GATConv(hidden_dim, hidden_dim)
         self.dropout = nn.Dropout(p=dropout)
 
         ### MLP ###
-        self.mlp_after = MLP(hidden_dim*2)
+        self.mlp_after = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(hidden_dim, hidden_dim * 4),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 4, hidden_dim * 2),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        )
 
     def forward(self, des, tweet, num_prop, cat_prop, edge_index, edge_type=None):
         d = self.linear_relu_des(des)
@@ -74,15 +75,23 @@ class BotGAT_MLP_Skip(nn.Module):
         x = self.dropout(x)
         x = self.gat2(x + y, edge_index)
         x = self.linear_relu_output1(x)
-        x = self.linear_output2(x)
         y = x
         x = self.mlp_after(x + y)
+        x = self.linear_output2(x)
         return x
 
 class BotGAT_MLP(nn.Module):
     def __init__(self, hidden_dim, des_size=768, tweet_size=768, num_prop_size=5, cat_prop_size=3, dropout=0.3):
+        super(BotGAT_MLP, self).__init__()
         ### MLP ###
-        self.mlp_before = MLP(hidden_dim)
+        self.mlp_before = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(hidden_dim, hidden_dim * 4),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 4, hidden_dim * 2),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        )
         ### GAT ###
 
         self.linear_relu_des = nn.Sequential(
@@ -113,11 +122,19 @@ class BotGAT_MLP(nn.Module):
         self.linear_output2 = nn.Linear(hidden_dim, 2)
 
         self.gat1 = GATConv(hidden_dim, hidden_dim // 4, heads=4)
+        
         self.gat2 = GATConv(hidden_dim, hidden_dim)
         self.dropout = nn.Dropout(p=dropout)
 
         ### MLP ###
-        self.mlp_after = MLP(hidden_dim)
+        self.mlp_after = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(hidden_dim, hidden_dim * 4),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 4, hidden_dim * 2),
+            nn.ReLU(),
+            nn.Linear(hidden_dim * 2, hidden_dim)
+        )
 
     def forward(self, des, tweet, num_prop, cat_prop, edge_index, edge_type=None):
         d = self.linear_relu_des(des)
@@ -132,8 +149,8 @@ class BotGAT_MLP(nn.Module):
         x = self.dropout(x)
         x = self.gat2(x, edge_index)
         x = self.linear_relu_output1(x)
-        x = self.linear_output2(x)
         x = self.mlp_after(x)
+        x = self.linear_output2(x)
         return x
 
 class BotGAT(nn.Module):
