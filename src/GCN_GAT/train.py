@@ -33,6 +33,7 @@ if not os.path.exists("checkpoints/"):
     os.mkdir("checkpoints/")
     
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
 # parser = ArgumentParser()
 # parser.add_argument('--mode', type=str, default='GCN')
 # parser.add_argument('--visible', type=bool, default=False)
