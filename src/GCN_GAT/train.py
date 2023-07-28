@@ -18,7 +18,7 @@ with warnings.catch_warnings():
     from torch_geometric.loader import NeighborLoader
     from tqdm import tqdm
     import torch.nn as nn
-    from model import BotGAT, BotGCN, BotRGCN, BotGAT_GCN_Ensemble, BotGAT_MLP
+    from model import BotGAT, BotGCN, BotRGCN, BotGAT_GCN_Ensemble, BotGAT_MLP, BotGAT_MLP_Skip
 
     import yaml
     import pandas as pd
@@ -58,7 +58,7 @@ dataset_name = "cresci-2015"
 mode = args.mode
 visible = args.visible
 
-assert mode in ['GCN', 'GAT', 'RGCN', 'GAT_GCN_ENSEMBLE', 'GAT_MLP']
+assert mode in ['GCN', 'GAT', 'RGCN', 'GAT_GCN_ENSEMBLE', 'GAT_MLP', 'GAT_MLP_SKIP']
 # assert dataset_name in ['cresci-2015']
 
 data = get_train_data(dataset_name)
@@ -176,7 +176,12 @@ def train(results):
                        num_prop_size=data.num_property_embedding.shape[-1],
                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
     elif mode == 'GAT_MLP':
-        model = BotGAT_GCN_Ensemble(hidden_dim=args.hidden_dim,
+        model = BotGAT_MLP(hidden_dim=args.hidden_dim,
+                        dropout=args.dropout,
+                        num_prop_size=data.num_property_embedding.shape[-1],
+                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
+    elif mode == 'GAT_MLP_SKIP':
+        model = BotGAT_MLP_Skip(hidden_dim=args.hidden_dim,
                         dropout=args.dropout,
                         num_prop_size=data.num_property_embedding.shape[-1],
                         cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
