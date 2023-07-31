@@ -315,4 +315,6 @@ if __name__ == '__main__':
                                             'test_auc',
                                             'test_mcc',
                                             'test_pr_auc'])
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     train(results)
