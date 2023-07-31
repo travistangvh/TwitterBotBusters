@@ -4,12 +4,13 @@ import torch
 import os.path as osp
 from torch_geometric.data import Data
 
+embedding_model = "roberta_"
 
 def get_transfer_data():
     path = '../../BotRGCN/cresci_15/processed_data'
     labels = torch.load(osp.join(path, 'label.pt'))
-    des_embedding = torch.load(osp.join(path, 'des_tensor.pt'))
-    tweet_embedding = torch.load(osp.join(path, 'tweets_tensor.pt'))
+    des_embedding = torch.load(osp.join(path, embedding_model + 'des_tensor.pt'))
+    tweet_embedding = torch.load(osp.join(path, embedding_model + 'tweets_tensor.pt'))
     num_property_embedding = torch.load(osp.join(path, 'num_properties_tensor.pt'))
     cat_property_embedding = torch.load(osp.join(path, 'cat_properties_tensor.pt'))
     edge_index = torch.load(osp.join(path, 'edge_index.pt'))
@@ -38,8 +39,8 @@ def get_train_data(dataset_name):
         print(f"{path} does not exist...")
         raise KeyError
     labels = torch.load(osp.join(path, 'label.pt'))
-    des_embedding = torch.load(osp.join(path, 'des_tensor.pt'))
-    tweet_embedding = torch.load(osp.join(path, 'tweets_tensor.pt'))
+    des_embedding = torch.load(osp.join(path, embedding_model + 'des_tensor.pt'))
+    tweet_embedding = torch.load(osp.join(path, embedding_model + 'tweets_tensor.pt'))
     num_property_embedding = torch.load(osp.join(path, 'num_properties_tensor.pt'))
     cat_property_embedding = torch.load(osp.join(path, 'cat_properties_tensor.pt'))
     edge_type = torch.load(osp.join(path, 'edge_type.pt'))
