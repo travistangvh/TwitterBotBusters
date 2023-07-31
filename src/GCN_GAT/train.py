@@ -57,11 +57,12 @@ for key in config:
 dataset_name = "cresci-2015"
 mode = args.mode
 visible = args.visible
+embedding_model = args.embedding_model if hasattr(args, 'embedding_model') else ''
 
 assert mode in ['GCN', 'GAT', 'RGCN', 'GAT_GCN_ENSEMBLE', 'GAT_MLP', 'GAT_MLP_SKIP']
 # assert dataset_name in ['cresci-2015']
 
-data = get_train_data(dataset_name)
+data = get_train_data(dataset_name, embedding_model)
 data = data.contiguous()
 
 # hidden_dim = args.hidden_dim
