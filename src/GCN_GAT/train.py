@@ -18,7 +18,7 @@ with warnings.catch_warnings():
     from torch_geometric.loader import NeighborLoader
     from tqdm import tqdm
     import torch.nn as nn
-    from model import BotGAT, BotGCN, BotRGCN
+    from model import BotGAT, BotGCN, BotRGCN, BotGAT_GCN_Ensemble, BotGAT_MLP, BotGAT_MLP_Skip
 
     import yaml
     import pandas as pd
@@ -33,6 +33,7 @@ if not os.path.exists("checkpoints/"):
     os.mkdir("checkpoints/")
     
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
 # parser = ArgumentParser()
 # parser.add_argument('--mode', type=str, default='GCN')
 # parser.add_argument('--visible', type=bool, default=False)
@@ -56,11 +57,13 @@ for key in config:
 dataset_name = "cresci-2015"
 mode = args.mode
 visible = args.visible
+embedding_model = args.embedding_model if hasattr(args, 'embedding_model') else ''
 
-assert mode in ['GCN', 'GAT', 'RGCN']
+assert mode in ['GCN', 'GAT', 'RGCN', 'GAT_GCN_ENSEMBLE', 'GAT_MLP', 'GAT_MLP_SKIP']
 # assert dataset_name in ['cresci-2015']
 
-data = get_train_data(dataset_name)
+data = get_train_data(dataset_name, embedding_model)
+data = data.contiguous()
 
 # hidden_dim = args.hidden_dim
 # dropout = args.dropout
@@ -168,6 +171,21 @@ def train(results):
                        dropout=args.dropout,
                        num_prop_size=data.num_property_embedding.shape[-1],
                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
+    elif mode == 'GAT_GCN_ENSEMBLE':
+        model = BotGAT_GCN_Ensemble(hidden_dim=args.hidden_dim,
+                       dropout=args.dropout,
+                       num_prop_size=data.num_property_embedding.shape[-1],
+                       cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
+    elif mode == 'GAT_MLP':
+        model = BotGAT_MLP(hidden_dim=args.hidden_dim,
+                        dropout=args.dropout,
+                        num_prop_size=data.num_property_embedding.shape[-1],
+                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
+    elif mode == 'GAT_MLP_SKIP':
+        model = BotGAT_MLP_Skip(hidden_dim=args.hidden_dim,
+                        dropout=args.dropout,
+                        num_prop_size=data.num_property_embedding.shape[-1],
+                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
     elif mode == 'GCN':
         model = BotGCN(hidden_dim=args.hidden_dim,
                        dropout=args.dropout,
@@ -297,5 +315,6 @@ if __name__ == '__main__':
                                             'test_auc',
                                             'test_mcc',
                                             'test_pr_auc'])
-
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     train(results)
