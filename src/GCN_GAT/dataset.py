@@ -4,6 +4,7 @@ import torch
 import os.path as osp
 from torch_geometric.data import Data
 
+
 def get_transfer_data():
     path = '../../BotRGCN/cresci_15/processed_data'
     labels = torch.load(osp.join(path, 'label.pt'))
@@ -27,10 +28,9 @@ data_index = {
     'Twibot-20': 'twibot_20'
 }
 
-def get_train_data(dataset_name):
-    get_train_data(dataset_name=dataset_name, embedding_model='')
 
-def get_train_data(dataset_name, embedding_model):
+
+def get_train_data(dataset_name):
     print(f"dataset_name: {dataset_name}")
     path = '../BotRGCN/{}/processed_data'.format(data_index[dataset_name])
     
@@ -38,10 +38,8 @@ def get_train_data(dataset_name, embedding_model):
         print(f"{path} does not exist...")
         raise KeyError
     labels = torch.load(osp.join(path, 'label.pt'))
-    des_tensor_path = embedding_model + '_des_tensor.pt'  if embedding_model != '' else 'des_tensor.pt'
-    des_embedding = torch.load(osp.join(path, des_tensor_path))
-    tweets_tensor_path = embedding_model + '_tweets_tensor.pt'  if embedding_model != '' else 'tweets_tensor.pt'
-    tweet_embedding = torch.load(osp.join(path, tweets_tensor_path))
+    des_embedding = torch.load(osp.join(path, 'des_tensor.pt'))
+    tweet_embedding = torch.load(osp.join(path, 'tweets_tensor.pt'))
     num_property_embedding = torch.load(osp.join(path, 'num_properties_tensor.pt'))
     cat_property_embedding = torch.load(osp.join(path, 'cat_properties_tensor.pt'))
     edge_type = torch.load(osp.join(path, 'edge_type.pt'))
