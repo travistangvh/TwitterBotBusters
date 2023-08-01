@@ -96,6 +96,51 @@ class BotGCN(nn.Module):
         self.linear_skip1 = nn.Linear(hidden_dim, hidden_dim)
         self.linear_skip2 = nn.Linear(hidden_dim // 2, hidden_dim // 2)
 
+        stack = torch.cat((x, x_gcn), dim=0)
+        x = self.linear_ensemble(stack)
+        return x
+
+
+class BotGCN(nn.Module):
+    def __init__(self, hidden_dim, des_size=768, tweet_size=768, num_prop_size=5, cat_prop_size=3, dropout=0.3, skip_connection=False):
+        super(BotGCN, self).__init__()
+        self.linear_relu_des = nn.Sequential(
+            nn.Linear(des_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_tweet = nn.Sequential(
+            nn.Linear(tweet_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_num_prop = nn.Sequential(
+            nn.Linear(num_prop_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_cat_prop = nn.Sequential(
+            nn.Linear(cat_prop_size, hidden_dim // 4),
+            nn.LeakyReLU()
+        )
+
+        self.linear_relu_input = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_output1 = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim//2),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_output2 = nn.Sequential(
+            nn.Linear(hidden_dim//2, hidden_dim//2),
+            nn.LeakyReLU()
+        )
+        self.linear_relu_output3 = nn.Sequential(
+            nn.Linear(hidden_dim//2, hidden_dim//4),
+            nn.LeakyReLU()
+        )
+
+        self.linear_skip1 = nn.Linear(hidden_dim, hidden_dim)
+        self.linear_skip2 = nn.Linear(hidden_dim // 2, hidden_dim // 2)
+
         self.linear_relu_output4 = nn.Sequential(
             nn.Linear(hidden_dim//4, hidden_dim//8),
             nn.LeakyReLU()
