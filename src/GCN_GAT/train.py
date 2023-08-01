@@ -189,6 +189,7 @@ def train(results):
     elif mode == 'GCN':
         model = BotGCN(hidden_dim=args.hidden_dim,
                        dropout=args.dropout,
+                       skip_connection=args.skip_connection,
                        num_prop_size=data.num_property_embedding.shape[-1],
                        cat_prop_size=data.cat_property_embedding.shape[-1]).to(device)
     elif mode == 'RGCN':
