@@ -32,3 +32,5 @@ conda install --name botbusters python-louvain -y
 # pip install --upgrade --force-reinstall torch-geometric -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
 # pip install --upgrade --force-reinstall torch-sparse -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
 # pip install --upgrade --force-reinstall torch-scatter -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
+# pip install --upgrade --force-reinstall tokenizers
+# pip install --upgrade --force-reinstall transformers

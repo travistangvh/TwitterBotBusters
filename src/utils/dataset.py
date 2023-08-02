@@ -21,7 +21,7 @@ def get_data_dir(server_id):
     # else:
     #     raise NotImplementedError
     # Change to your own path
-    return Path("/scratch/network/rr4001/projects/voon/TwitterBotBusters/src/BotRGCN/datasets/")
+    return Path("../BotRGCN/datasets/")
 
 dataset_names = [
     'botometer-feedback-2019', 'botwiki-2019', 'celebrity-2019', 'cresci-2015', 'cresci-2017', 'cresci-rtbust-2019', 'cresci-stock-2018', 'gilani-2017', 'midterm-2018', 'political-bots-2019', 'pronbots-2019', 'vendor-purchased-2019', 'verified-2019', "Twibot-20","Twibot-22"

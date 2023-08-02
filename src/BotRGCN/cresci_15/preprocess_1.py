@@ -220,8 +220,6 @@ dict={i:[] for i in range(len(user))}
 for i in tqdm(range(len(edge))):
     dict[edge.iloc[i]['source_id']].append(edge.iloc[i]['target_id'])
 
-# np.save('processed_data1/each_user_tweets.npy',dict)
-
 import pickle
 with open('processed_data1/each_user_tweets.pickle', 'wb') as handle:
     pickle.dump(dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
