@@ -11,3 +11,4 @@ Train:
   dropout: 0.3
   save_best: False
   visible: True
+  skip_connection: False
