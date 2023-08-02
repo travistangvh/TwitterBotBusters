@@ -13,7 +13,7 @@ datasets/*
 *.pkl
 *.npy
 *.npz
-*.ipynb
+# *.ipynb
 # *.csv
 *.txt
 # *.md
