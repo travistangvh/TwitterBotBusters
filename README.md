@@ -10,7 +10,10 @@ Cresci-15 dataset contains `node.json`, `label.csv`, `split.csv` and `edge.csv` 
 
 ### How to download Cresci-15 dataset
 
-Cresci-15 is available at [Google Drive](https://drive.google.com/drive/folders/1gXFZp3m7TTU-wyZRUiLHdf_sIZpISrze).
+Cresci-15 is available at [Google Drive](https://drive.google.com/drive/folders/1gXFZp3m7TTU-wyZRUiLHdf_sIZpISrze). 
+
+1. Download `Other-Dataset-TwiBot22-Format.zip` and unzip.
+2. Copy `cresci-2015` to `src/BotRGCN/datasets/`.
 
 ### Requirements
 
